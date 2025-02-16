@@ -111,7 +111,7 @@ I expect little implementation difficulty of handling hexadeciaml floatin-point 
 
 Wording is relative to [[N5001]].
 
-## [charconv.syn]
+## [charconv.syn] ## {#charconv_syn}
 
 <pre nohighlight>
 // 28.2.2, primitive numerical output conversion
@@ -151,7 +151,7 @@ constexpr from_chars_result from_chars(const char* first, const char* last, // f
 }
 </pre>
 
-## [charconv.to.chars]
+## [charconv.to.chars] ## {#charconv_to_chars}
 
 <pre nohighlight>
 <ins>constexpr</ins> to_chars_result to_chars(char* first, char* last, <i>floating-point-type</i> value);
@@ -173,16 +173,16 @@ constexpr from_chars_result from_chars(const char* first, const char* last, // f
 <ins>constexpr</ins> to_chars_result to_chars(char* first, char* last, <i>floating-point-type</i> value, chars_format fmt, int precision);
 </pre>
 
-## [charconv.from.chars]
+## [charconv.from.chars] ## {#charconv_from_chars}
 
 <pre nohighlight>
 <ins>constexpr</ins> from_chars_result from_chars(const char* first, const char* last, <i>floating-point-type</i> &amp; value, chars_format fmt = chars_format::general);
 </pre>
 
-## [version.syn]
+## [version.syn] ## {#version_syn}
 
 <pre nohighlight>
-#define __cpp_lib_constexpr_charconv <del>202207L</del><i><ins>DATE-OF-ADOPTION</ins></i> // freestanding, also in <charconv>
+#define __cpp_lib_constexpr_charconv <del>202207L</del><i><ins>DATE-OF-ADOPTION</ins></i> // freestanding, also in &lt;charconv$gt;
 </pre>
 
 # Acknowledgements # {#acknowledgements}
