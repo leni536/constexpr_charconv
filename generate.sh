@@ -1,6 +1,6 @@
 #!/bin/bash
 
-num=2413
+num=xxxx
 stat="P"
 repo_state=
 
