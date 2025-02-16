@@ -1,0 +1,190 @@
+<pre class='metadata'>
+Markup Shorthands: markdown yes
+Title: Constexpr floating-point &lt;charconv&gt; functions
+No Abstract: yes
+Shortname: Dxxxx
+Level: none
+Status: D
+ED:
+Group: WG21
+Audience: LEWG
+Editor: Lénárd Szolnoki, cpp@lenardszolnoki.com
+</pre>
+<pre class='biblio'>
+{
+  "P2291R3": {
+    "authors": [
+      "Daniil Goncharov",
+      "Alexander Karaev"
+    ],
+    "href": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2291r3.pdf",
+    "title": "Add Constexpr Modifiers to Functions to_chars and from_chars for Integral Types in &lt;charconv&gt; Header"
+  },
+  "P0067R5": {
+    "authors": [
+      "Jens Maurer"
+    ],
+    "href": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0067r5.html",
+    "title": "Elementary string conversions"
+  },
+  "P1967R14": {
+    "authors": [
+      "JeanHeyd Meneide",
+      "Shepherd (Shepherd's Oasis LLC)"
+    ],
+    "href": "https://isocpp.org/files/papers/P1967R14.html",
+    "title": "#embed - a scannable, tooling-friendly binary resource inclusion mechanism"
+  },
+  "P2741R3": {
+    "authors": [
+      "Corentin Jabot"
+    ],
+    "href": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2023/p2741r3.pdf",
+    "title": "user-generated static_assert messages"
+  },
+  "P2758R4": {
+    "authors": [
+      "Barry Revzin"
+    ],
+    "href": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2758r4.html",
+    "title": "Emitting messages at compile time"
+  },
+  "N5001": {
+    "authors": ["Thomas Köppe"],
+    "href": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/n5001.pdf",
+    "title": "Working Draft, Standard for Programming Language C++"
+  },
+  "fast_float": {
+    "authors": ["Daniel Lemire"],
+    "href": "https://github.com/fastfloat/fast_float",
+    "title": "fast_float number parsing library"
+  },
+  "dragonbox": {
+    "authors": ["Junekey Jeon"],
+    "href": "https://github.com/jk-jeon/dragonbox",
+    "title": "Dragonbox"
+  }
+}
+</pre>
+
+<pre class="include-raw">
+path: bikeshed-wording.html
+</pre>
+
+# Proposal # {#proposal}
+
+I propose to make the `to_chars` and `from_chars` functions for **floating-point types** usable in constant expressions.
+
+# Motivation # {#motivation}
+
+[[P2291R3]] added `constexpr` to the integer overloads of `from_chars` and `to_chars`.
+The floating-point overloads were left out of consideration, as at the time there was little implementation experience even without `constexpr`.
+Quoting [[P2291R3]] (1.2.2 Floating point): 
+> `std::from_chars`/`std::to_chars` are probably the most difficult to implement parts of a standard library.
+> As of January 2021, only one of the three major implementations has full support of [[P0067R5]]:
+
+Since then, standard libraries implemented the floating-point overloads of `from_chars` and `to_chars`.
+Popular 3rd party implementations of these functions also made their implementations `constexpr`.
+
+In addition to the original motivation in [[P2291R3]], the utility of having all of the `<charconv>` functions available during constant evaluation is also greatly increased in combination with [[P1967R14]] (#embed), [[P2741R3]] (user-generated `static_assert` messages) and [[P2758R4]] (emitting messages at compile time).
+
+# Implementation experience # {#implementation}
+
+I contributed to the [[fast_float]] and [[dragonbox]] projects to make their implementation of `from_chars` and `to_chars` usable in constant expressions.
+
+[[fast_float]] has an implementation of `from_chars` limited to decimal string representation of floating-point numbers,
+  with state-of-the-art runtime performance.
+Making this implementation usable from constant expressions was relatively straightforward,
+  the bulk of the work was adding `constexpr` to all of the function declarations,
+  with some other minor changes here and there.
+`std::is_constant_evaluated()` made it possible to navigate around compiler built-ins and other `constexpr`-hostile constructs and use the already available generic implementation instead.
+
+[[dragonbox]] has an implementation of `to_chars` limited to decimal string representation of floating-point numbers,
+  with state-of-the-art runtime performance.
+Making it work in constant expressions was similarly straightforward.
+
+I am not aware of any implementation for the hexadecimal floating-point parts of these functions.
+I expect little implementation difficulty of handling hexadeciaml floatin-point representations,
+  given that the algorithms for handling the decimal representation of floating-point are vastly more complicated.
+
+# Wording # {#wording}
+
+Wording is relative to [[N5001]].
+
+## [charconv.syn]
+
+<pre nohighlight>
+// 28.2.2, primitive numerical output conversion
+struct to_chars_result { // freestanding
+  char* ptr;
+  errc ec;
+  friend bool operator==(const to_chars_result&amp;, const to_chars_result&amp;) = default;
+  constexpr explicit operator bool() const noexcept { return ec == errc{}; }
+};
+
+constexpr to_chars_result to_chars(char* first, char* last, // freestanding
+                                   <i>integer-type</i> value, int base = 10);
+to_chars_result to_chars(char* first, char* last, // freestanding
+                         bool value, int base = 10) = delete;
+
+<ins>constexpr</ins> to_chars_result to_chars(char* first, char* last, // freestanding-deleted
+                                   <i>floating-point-type</i> value);
+<ins>constexpr</ins> to_chars_result to_chars(char* first, char* last, // freestanding-deleted
+                                   <i>floating-point-type</i> value, chars_format fmt);
+<ins>constexpr</ins> to_chars_result to_chars(char* first, char* last, // freestanding-deleted
+                                   <i>floating-point-type</i> value, chars_format fmt, int precision);
+
+// 28.2.3, primitive numerical input conversion
+struct from_chars_result { // freestanding
+  const char* ptr;
+  errc ec;
+  friend bool operator==(const from_chars_result&amp;, const from_chars_result&amp;) = default;
+  constexpr explicit operator bool() const noexcept { return ec == errc{}; }
+};
+
+constexpr from_chars_result from_chars(const char* first, const char* last, // freestanding
+                                       <i>integer-type</i>&amp; value, int base = 10);
+
+<ins>constexpr</ins> from_chars_result from_chars(const char* first, const char* last, // freestanding-deleted
+                                       <i>floating-point-type</i>&amp; value,
+                                       chars_format fmt = chars_format::general);
+}
+</pre>
+
+## [charconv.to.chars]
+
+<pre nohighlight>
+<ins>constexpr</ins> to_chars_result to_chars(char* first, char* last, <i>floating-point-type</i> value);
+</pre>
+
+<div>
+…
+</div>
+
+<pre nohighlight>
+<ins>constexpr</ins> to_chars_result to_chars(char* first, char* last, <i>floating-point-type</i> value, chars_format fmt);
+</pre>
+
+<div>
+…
+</div>
+
+<pre nohighlight>
+<ins>constexpr</ins> to_chars_result to_chars(char* first, char* last, <i>floating-point-type</i> value, chars_format fmt, int precision);
+</pre>
+
+## [charconv.from.chars]
+
+<pre nohighlight>
+<ins>constexpr</ins> from_chars_result from_chars(const char* first, const char* last, <i>floating-point-type</i> &amp; value, chars_format fmt = chars_format::general);
+</pre>
+
+## [version.syn]
+
+<pre nohighlight>
+#define __cpp_lib_constexpr_charconv <del>202207L</del><i><ins>DATE-OF-ADOPTION</ins></i> // freestanding, also in <charconv>
+</pre>
+
+# Acknowledgements # {#acknowledgements}
+
+Thanks to Daniel Lemire and Junekey Jeon for their libraries.

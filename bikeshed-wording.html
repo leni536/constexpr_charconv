@@ -1,0 +1,315 @@
+<style>
+:root {
+	/* Default (light) theme */
+	--foreground-point: rgb(0,0,0);
+	--background-point: rgb(255,255,255);
+
+	--ins-text-color: rgb(0, 182, 15);
+	--diff-ins-text-color: rgb(0, 176, 189);
+	--del-text-color: rgb(255, 58, 58);
+	--diff-del-text-color: rgb(139, 0, 194);
+}
+
+/* dark theme */
+@media (prefers-color-scheme: dark) {
+	:root {
+		--foreground-point: rgb(255,255,255);
+		--background-point: rgb(0,0,0);
+
+		--ins-text-color: rgb(48, 255, 48);
+		--diff-ins-text-color: rgb(91, 250, 255);
+		--del-text-color: rgb(255, 52, 52);
+		--diff-del-text-color: rgb(244, 129, 255);
+	}
+}
+
+:root {
+	--ins-text-background-color: color-mix(in srgb, var(--ins-text-color) 5%, var(--background-point));
+	--ins-code-background-color: color-mix(in srgb, var(--ins-text-color) 15%, var(--background-point));
+	--ins-text-decoration-color: color-mix(in srgb, var(--diff-ins-text-color) 10%, var(--foreground-point));
+	--diff-ins-text-background-color: color-mix(in srgb, var(--diff-ins-text-color) 5%, var(--background-point));
+	--diff-ins-code-background-color: color-mix(in srgb, var(--diff-ins-text-color) 15%, var(--background-point));
+	--diff-ins-text-decoration-color: color-mix(in srgb, var(--diff-ins-text-color) 10%, var(--foreground-point));
+
+	--del-text-background-color: color-mix(in srgb, var(--del-text-color) 5%, var(--background-point));
+	--del-code-background-color: color-mix(in srgb, var(--del-text-color) 15%, var(--background-point));
+	--del-text-decoration-color: color-mix(in srgb, var(--del-text-color) 10%, var(--foreground-point));
+	--diff-del-text-background-color: color-mix(in srgb, var(--diff-del-text-color) 5%, var(--background-point));
+	--diff-del-code-background-color: color-mix(in srgb, var(--diff-del-text-color) 15%, var(--background-point));
+	--diff-del-text-decoration-color: color-mix(in srgb, var(--diff-del-text-color) 10%, var(--foreground-point));
+}
+
+@media print {
+	.pagebreak { break-after: always }
+}
+
+ins .wording-section .highlight:not(.idl) { background: var(--ins-code-background-color); }
+diff-ins .wording-section .highlight:not(.idl) { background: var(--diff-ins-code-background-color); }
+del .wording-section .highlight:not(.idl) { background: var(--del-code-background-color); }
+diff-del .wording-section .highlight:not(.idl) { background: var(--diff-del-code-background-color); }
+
+
+.tg  {
+	border-collapse: collapse;
+	border-spacing:0;
+}
+
+.tg td{
+	padding:10px 10px;
+	border-style: solid;
+	border-width:1px;
+	overflow: hidden;
+	word-break: normal;
+	border-color: var(--table-border-color, unset);
+}
+.tg th{
+	font-weight: normal;
+	padding: 10px 10px;
+	border-style: solid;
+	border-width: 1px;
+	overflow: hidden;
+	word-break: normal;
+	border-color: black;
+}
+.tg .tg-c3ow { 
+	border-color: unset;
+	text-align: center;
+	vertical-align: top
+}
+
+.ins, ins, ins p, ins div, span.ins, span.ins * {
+	background-color: var(--ins-text-background-color);
+	background: var(--ins-text-background-color);
+	color: var(--ins-text-color);
+	text-decoration: underline;
+	text-decoration-color: var(--ins-text-decoration-color);
+}
+
+.diff-ins, diff-ins, diff-ins p, diff-ins div, span.diff-ins, span.diff-ins * {
+	background-color: var(--diff-ins-text-background-color);
+	background: var(--diff-ins-text-background-color);
+	color: var(--diff-ins-text-color);
+	text-decoration: underline double;
+	text-decoration-color: var(--diff-ins-text-decoration-color);
+}
+
+.del, del, del p, del div, span.del, span.del * {
+	background-color: var(--del-text-background-color);
+	background: var(--del-text-background-color);
+	color: var(--del-text-color);
+	text-decoration: line-through;
+	text-decoration-color: var(--del-text-decoration-color);
+}
+
+.diff-del, diff-del, diff-del p, diff-del div, span.diff-del, span.diff-del * {
+	background-color: var(--diff-del-text-background-color);
+	background: var(--diff-del-text-background-color);
+	color: var(--diff-del-text-color);
+	text-decoration: line-through double;
+	text-decoration-color: var(--diff-del-text-decoration-color);
+}
+
+code.c-kw {
+	font-weight: bold;
+}
+
+math, span.math {
+	font-family: serif;
+	font-style: italic;
+}
+
+ul {
+	list-style-type: "— ";
+}
+
+.wording-clause {
+	counter-reset: wording-paragraph;
+}
+
+.wording-clause-header {
+	font-size: 115%;
+	display: block;
+	padding-bottom: 1em;
+	clear: both;
+}
+
+.wording-clause-number {
+	font-weight: bold;
+}
+
+.wording-clause-title {
+	font-weight: bold;
+	margin: 2em;
+}
+
+.wording-clause-stable-tag {
+	float: right;
+}
+
+.wording-clause-section-title {
+	font-size: 105%;
+	font-weight: bold;
+}
+
+.clause-stable-tag {
+	float: right;
+}
+
+.footnote-ref {
+	font-size: 75%;
+	vertical-align: super;
+}
+
+.footnote {
+	font-size: 75%;
+	vertical-align: bottom;
+}
+
+div.wording-section {
+	counter-reset: wording-paragraph;
+}
+
+div.wording-numbered, div.wording-newnumbered {
+	margin-left: 2.5em;
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+div.wording-numbered:before, div.wording-newnumbered:before {
+	position: absolute;
+	margin-left: -2.5em;
+	display: block;
+}
+
+div.wording-numbered:before {
+	content: counter(wording-paragraph);
+	counter-increment: wording-paragraph;
+	font-size: smaller;
+}
+
+div.wording-newnumbered:before {
+	content: counter(wording-paragraph)"✨";
+	counter-increment: wording-paragraph;
+	font-size: smaller;
+}
+
+div.wording-numbered-list>ul, div.wording-newnumbered ul {
+	counter-reset: wording-list-item;
+}
+
+div.wording-numbered-list>ul>li>ul {
+  counter-reset: wording-sublist-item;
+}
+
+div.wording-numbered-list li, div.wording-newnumbered li {
+	margin-left: 4em;
+}
+
+div.wording-numbered-list li:before, div.wording-newnumbered li:before {
+	position: absolute;
+	margin-left: -4em;
+	display: block;
+}
+
+div.wording-numbered-list>ul>li:before {
+	font-size: smaller;
+	content: "(" counter(wording-paragraph) "." counter(wording-list-item) ")";
+	counter-increment: wording-list-item;
+}
+
+div.wording-numbered-list>ul>li>ul>li:before {
+  margin-left: -5em;
+	font-size: smaller;
+	content: "(" counter(wording-paragraph) "." counter(wording-list-item) "." counter(wording-sublist-item) ")";
+	counter-increment: wording-sublist-item;
+}
+
+div.wording-newnumbered-list li:before {
+	content: "(✨" counter(wording-paragraph) "." counter(wording-list-item) ")";
+	counter-increment: wording-list-item;
+}
+
+div.wording-numbered-0 {
+	counter-reset: wording-paragraph -1;
+}
+
+div.wording-numbered-1 {
+	counter-reset: wording-paragraph 0;
+}
+
+div.wording-numbered-2 {
+	counter-reset: wording-paragraph 1;
+}
+
+div.wording-numbered-3 {
+	counter-reset: wording-paragraph 2;
+}
+
+div.wording-numbered-4 {
+	counter-reset: wording-paragraph 3;
+}
+
+div.wording-numbered-5 {
+	counter-reset: wording-paragraph 4;
+}
+
+div.wording-numbered-6 {
+	counter-reset: wording-paragraph 5;
+}
+
+div.wording-numbered-7 {
+	counter-reset: wording-paragraph 6;
+}
+
+div.wording-numbered-8 {
+	counter-reset: wording-paragraph 7;
+}
+
+div.wording-numbered-9 {
+	counter-reset: wording-paragraph 8;
+}
+
+div.wording-numbered-10 {
+	counter-reset: wording-paragraph 9;
+}
+
+div.wording-numbered-11 {
+	counter-reset: wording-paragraph 10;
+}
+
+div.wording-numbered-12 {
+	counter-reset: wording-paragraph 11;
+}
+
+div.wording-numbered-13 {
+	counter-reset: wording-paragraph 12;
+}
+
+div.wording-numbered-14 {
+	counter-reset: wording-paragraph 13;
+}
+
+div.wording-numbered-15 {
+	counter-reset: wording-paragraph 14;
+}
+
+div.wording-numbered-16 {
+	counter-reset: wording-paragraph 15;
+}
+
+div.wording-numbered-17 {
+	counter-reset: wording-paragraph 16;
+}
+
+div.wording-numbered-18 {
+	counter-reset: wording-paragraph 17;
+}
+
+div.wording-numbered-19 {
+	counter-reset: wording-paragraph 18;
+}
+
+div.wording-numbered-20 {
+	counter-reset: wording-paragraph 19;
+}
+</style>
