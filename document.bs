@@ -7,7 +7,7 @@ Level: none
 Status: D
 ED:
 Group: WG21
-Audience: LEWG
+Audience: LEWGI, LEWG
 Editor: Lénárd Szolnoki, cpp@lenardszolnoki.com
 </pre>
 <pre class='biblio'>
@@ -104,7 +104,7 @@ Making this implementation usable from constant expressions was relatively strai
 Making it work in constant expressions was similarly straightforward.
 
 I am not aware of any implementation for the hexadecimal floating-point parts of these functions.
-I expect little implementation difficulty of handling hexadeciaml floatin-point representations,
+I expect little implementation difficulty of handling hexadecimal floating-point representations,
   given that the algorithms for handling the decimal representation of floating-point are vastly more complicated.
 
 # Wording # {#wording}

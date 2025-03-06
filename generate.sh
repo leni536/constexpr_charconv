@@ -1,6 +1,6 @@
 #!/bin/bash
 
-num=xxxx
+num=3652
 stat="P"
 repo_state=
 
@@ -11,8 +11,11 @@ fi
 
 revision=$(git tag --points-at HEAD | grep '^rev' | cut -b4-)
 if [ -z "$revision" ]; then
-    revision="commit_$(git rev-parse --short HEAD)"
     stat="D"
+    revision=$(git tag --points-at HEAD | grep '^drev' | cut -b5-)
+    if [ -z "$revision" ]; then
+        revision="commit_$(git rev-parse --short HEAD)"
+    fi
 fi
 revision="${revision}${repo_state}"
 shortname="${stat}${num}"
