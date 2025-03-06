@@ -94,10 +94,13 @@ I contributed to the [[fast_float]] and [[dragonbox]] projects to make their imp
 
 [[fast_float]] has an implementation of `from_chars` limited to decimal string representation of floating-point numbers,
   with state-of-the-art runtime performance.
-Making this implementation usable from constant expressions was relatively straightforward,
-  the bulk of the work was adding `constexpr` to all of the function declarations,
-  with some other minor changes here and there.
-`std::is_constant_evaluated()` made it possible to navigate around compiler built-ins and other `constexpr`-hostile constructs and use the already available generic implementation instead.
+Making this implementation usable from constant expressions was relatively straightforward.
+The bulk of the work was adding `constexpr` to all of the function declarations,
+  with some other minor changes here and there, using features available since C+&#8288;+20:
+
+* `std::is_constant_evaluated()` made it possible to navigate around compiler built-ins and other `constexpr`-hostile constructs (intrinsics, getting current rounding mode) and use the already available generic fallback implementation instead.
+* `std::bit_cast` replaced `memcpy` for type punning.
+* `std::copy` (`constexpr` since C+&#8288;+20) and related algorithms replaced `memcpy` for copying trivial ranges.
 
 [[dragonbox]] has an implementation of `to_chars` limited to decimal string representation of floating-point numbers,
   with state-of-the-art runtime performance.
@@ -105,7 +108,7 @@ Making it work in constant expressions was similarly straightforward.
 
 I am not aware of any implementation for the hexadecimal floating-point parts of these functions.
 I expect little implementation difficulty of handling hexadecimal floating-point representations,
-  given that the algorithms for handling the decimal representation of floating-point are vastly more complicated.
+  given that the algorithms for handling the decimal representation are vastly more complicated.
 
 # Wording # {#wording}
 
@@ -187,4 +190,6 @@ constexpr from_chars_result from_chars(const char* first, const char* last, // f
 
 # Acknowledgements # {#acknowledgements}
 
-Thanks to Daniel Lemire and Junekey Jeon for their libraries.
+I would like to thank Daniel Lemire and the contributors of [[fast_float]],
+  as well as Junekey Jeon and the contributors of [[dragonbox]] for their work on their open-source libraries.
+Their efforts have been invaluable for making this proposal possible.
