@@ -49,6 +49,13 @@ Editor: Lénárd Szolnoki, cpp@lenardszolnoki.com
     "href": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2758r4.html",
     "title": "Emitting messages at compile time"
   },
+  "P3391R0": {
+    "authors": [
+      "Barry Revzin"
+    ],
+    "href": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3391r0.html",
+    "title": "constexpr std::format"
+  },
   "N5001": {
     "authors": ["Thomas Köppe"],
     "href": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/n5001.pdf",
@@ -63,6 +70,21 @@ Editor: Lénárd Szolnoki, cpp@lenardszolnoki.com
     "authors": ["Junekey Jeon"],
     "href": "https://github.com/jk-jeon/dragonbox",
     "title": "Dragonbox"
+  },
+  "fmt": {
+    "authors": ["Victor Zverovich"],
+    "href": "https://github.com/fmtlib/fmt",
+    "title": "{fmt}"
+  },
+  "musl": {
+    "authors": ["Rich Felker"],
+    "href": "https://musl.libc.org/",
+    "title": "musl libc"
+  },
+  "musl_from_chars": {
+    "authors": ["Lénárd Szolnoki"],
+    "href": "https://github.com/leni536/musl_from_chars/",
+    "title": "musl_from_chars"
   }
 }
 </pre>
@@ -70,6 +92,12 @@ Editor: Lénárd Szolnoki, cpp@lenardszolnoki.com
 <pre class="include-raw">
 path: bikeshed-wording.html
 </pre>
+
+# Revision history # {#history}
+
+## R1 ## {#history_r1}
+* Add [[P3391R0]] to motivation.
+* Add [[fmt]] and [[musl_from_chars]] to implementation experience.
 
 # Proposal # {#proposal}
 
@@ -86,7 +114,7 @@ Quoting [[P2291R3]] (1.2.2 Floating point):
 Since then, standard libraries implemented the floating-point overloads of `from_chars` and `to_chars`.
 Popular 3rd party implementations of these functions also made their implementations `constexpr`.
 
-In addition to the original motivation in [[P2291R3]], the utility of having all of the `<charconv>` functions available during constant evaluation is also greatly increased in combination with [[P1967R14]] (#embed), [[P2741R3]] (user-generated `static_assert` messages) and [[P2758R4]] (emitting messages at compile time).
+In addition to the original motivation in [[P2291R3]], the utility of having all of the `<charconv>` functions available during constant evaluation is also greatly increased in combination with [[P1967R14]] (#embed), [[P2741R3]] (user-generated `static_assert` messages), [[P2758R4]] (emitting messages at compile time) and [[P3391R0]] (constexpr `std::format`).
 
 # Implementation experience # {#implementation}
 
@@ -106,9 +134,13 @@ The bulk of the work was adding `constexpr` to all of the function declarations,
   with state-of-the-art runtime performance.
 Making it work in constant expressions was similarly straightforward.
 
-I am not aware of any implementation for the hexadecimal floating-point parts of these functions.
-I expect little implementation difficulty of handling hexadecimal floating-point representations,
-  given that the algorithms for handling the decimal representation are vastly more complicated.
+[[fmt]] uses [[dragonbox]] to format `float` and `double`, and also has `constexpr` support
+  ([godbolt](https://godbolt.org/z/e79Psa1PM)).
+
+[[musl_from_chars]] is a work-in-progress implementation of `from_chars` with `constexpr` support based on the implementation of `strtod` in [[musl]]. It supports `float`, `double` and `long double`.
+It supports platforms where `long double` is IEEE 754 binary64, x87 extended-precision or IEEE 754 binary128.
+It supports parsing both decimal and hexidecimal representations
+  ([godbolt](https://godbolt.org/z/aGK6eWYav)).
 
 # Wording # {#wording}
 
